@@ -1,6 +1,15 @@
 import java.awt.*;
 import java.util.*;
 
+//  = means "is defined as"
+//  " " enclose literal items; accept()
+//  [ ] enclose items which may be omitted; check if []
+//  { } enclose items which may appear zero or more times; while {}
+//  | indicates a choice; or
+//  ( ) are used for grouping required choices;
+//  < > enclose semantic qualifications;
+//  identifier = Token.ID;
+
 public class Scanner extends Object{
 
    private Token token;
@@ -25,7 +34,7 @@ public class Scanner extends Object{
       chario.reset();
       ch = chario.getChar();
    }
-      
+
    private void initKeywords(){
       keywords = new HashMap<String, Token>();
       keywords.put("AND", new Token(Token.AND));
@@ -137,7 +146,7 @@ public class Scanner extends Object{
       if (ch == '#'){
          base = token.integer;
          if (base < 2 || base > 16){
-            chario.putError("base must be between 2 and 16"); 
+            chario.putError("base must be between 2 and 16");
             base = 16;
          }
          ch = chario.getChar();
@@ -178,7 +187,7 @@ public class Scanner extends Object{
       }
       return digit;
    }
-      
+
    private void getCharacter(){
       token = new Token(Token.CHAR);
       ch = chario.getChar();
@@ -196,7 +205,7 @@ public class Scanner extends Object{
             chario.putError("''' expected");
       }
    }
-      
+
    private void getDoubleOp(){
       tokenBuffer = new StringBuffer(2);
       tokenBuffer.append(ch);
