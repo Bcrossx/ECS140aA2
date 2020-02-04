@@ -89,7 +89,7 @@ public class Parser extends Object{
       accept(Token.END, "'end' expected");
       if (token.code == Token.ID)
          token = scanner.nextToken();
-      accept(Token.SEMI, "semicolon expected");
+      accept(Token.SEMI, "semicolon expected1");
    }
 
    /*
@@ -97,42 +97,42 @@ public class Parser extends Object{
    */
    private void subprogramSpecification(){ //x
      accept(Token.PROC, "'procedure' expected");
-     if(token.code == Token.L_PAR)
-      formalPart();
+     accept(Token.ID,"identifier expected1");
+     if (token.code == Token.L_PAR)
+        //token = scanner.nextToken();
+        formalPart();
    }
 
    /*
    formalPart = "(" parameterSpecification { ";" parameterSpecification } ")"
    */
    private void formalPart(){ //*
-     accept(Token.L_PAR, "'(' expected");
+     accept(Token.L_PAR, "'(' expected1");
      parameterSpecification();
      while(token.code == Token.SEMI){
-       parameterSpecification();
        token = scanner.nextToken();
+       parameterSpecification();
      }
-     accept(Token.R_PAR, "')' expected");
+     accept(Token.R_PAR, "')' expected1");
    }
 
    /*
-   parameterSpecification = identifierList ":" mode <type>name
+   parameterSpecification = identifierList ":" mode <type>identifier
    */
    private void parameterSpecification(){ //**
      identifierList();
-     accept(Token.COLON, "':' expected");
+     accept(Token.COLON, "':' expected1");
      mode();
-     name();
+     accept(Token.ID,"identifier expected2");
    }
 
    //mode = [ "in" ] | "in" "out" | "out"
    private void mode(){ //*
          if (token.code == Token.IN){
             accept(Token.IN, "'in' expected");
-            token = scanner.nextToken();
           }
          if (token.code == Token.OUT){
             accept(Token.OUT, "'out' expected");
-            token = scanner.nextToken();
           }
    }
 
@@ -172,7 +172,7 @@ public class Parser extends Object{
    */
    private void numberOrObjectDeclaration(){ //x
       identifierList();
-      accept(Token.COLON, "':' expected");
+      accept(Token.COLON, "':' expected2");
       if (token.code == Token.CONST){
          token = scanner.nextToken();
          accept(Token.GETS, "':=' expected");
@@ -180,7 +180,8 @@ public class Parser extends Object{
       }
       else
          typeDefinition();
-      accept(Token.SEMI, "semicolon expected");
+      System.out.print(token);
+      accept(Token.SEMI, "semicolon expected2");
    }
 
    /*
@@ -188,19 +189,19 @@ public class Parser extends Object{
    */
    private void typeDeclaration(){ //*
      accept(Token.TYPE, "'type' expected");
-     accept(Token.ID, "identifier expected");
+     accept(Token.ID, "identifier expected3");
      accept(Token.IS, "'is' expected");
      typeDefinition();
-     accept(Token.SEMI, "';' expected");
+     accept(Token.SEMI, "';' expected1");
    }
 
    /*
    typeDefinition = enumerationTypeDefinition | arrayTypeDefinition
-                  | range | <type>name
+                  | range | <type>identifier
    */
    private void typeDefinition(){ //***
      switch (token.code){
-        case Token.ID:
+        case Token.L_PAR:
           enumerationTypeDefinition();
           break;
         case Token.ARRAY:
@@ -209,17 +210,17 @@ public class Parser extends Object{
         case Token.RANGE:
           range();
           break;
-        case Token.TYPE:
-          name();
+        case Token.ID:
+          accept(Token.ID, "identifier expected4");
           break;
         default: fatalError("error in declaration part");
    }
  }
    //identifierList = identifier {"," identifier}
    private void identifierList(){ //***
+     accept(Token.ID,"identifier expected9");
      while (token.code == Token.COMMA){
-       token = scanner.nextToken();
-       //do something..
+       accept(Token.ID,"identifier expected01");
      }
    }
 
@@ -227,34 +228,38 @@ public class Parser extends Object{
    enumerationTypeDefinition = "(" identifierList ")"
    */
    private void enumerationTypeDefinition(){ //***
-     accept(Token.L_PAR, "'(' expected");
+     accept(Token.L_PAR, "'(' expected2");
      identifierList();
+     token = scanner.nextToken();
+     accept(Token.R_PAR,"')' expected2");
    }
 
    /*
-   arrayTypeDefinition = "array" "(" index { "," index } ")" "of" <type>name
+   arrayTypeDefinition = "array" "(" index { "," index } ")" "of" <type>identifier
    */
    private void arrayTypeDefinition(){ //*
      accept(Token.ARRAY, "'array' expected");
-     accept(Token.L_PAR, "'(' expected");
+     accept(Token.L_PAR, "'(' expected3");
      index();
+     token = scanner.nextToken();
      while(token.code == Token.COMMA){
        accept(Token.COMMA, "',' expected");
        index();
+       token = scanner.nextToken();
      }
-     accept(Token.R_PAR, "')' expected");
+     accept(Token.R_PAR, "')' expected3");
      accept(Token.OF,"'of' expected");
-     name();
+     accept(Token.ID,"identifier expected5");
    }
 
    /*
-   index = range | <type>name
+   index = range | <type>identifier
    */
    private void index(){ //*
     if(token.code == Token.RANGE)
       range();
     if(token.code == Token.ID)
-      name();
+      accept(Token.ID, "identifier expected02");
    }
 
    /*
@@ -263,6 +268,7 @@ public class Parser extends Object{
    private void range(){ //*
      accept(Token.RANGE, "'range' expected");
      simpleExpression();
+     token = scanner.nextToken();
      accept(Token.THRU, "'..' expected");
      simpleExpression();
    }
@@ -271,10 +277,9 @@ public class Parser extends Object{
    identifierList = identifier { "," identifer }
    */
    private void identiferList(){ //*
-     accept(Token.ID, "identifier expected");
+     accept(Token.ID, "identifier expected6");
      while(token.code == Token.COMMA){
-       accept(Token.ID, "identifier expected");
-       token = scanner.nextToken();
+       accept(Token.ID, "identifier expected7");
      }
    }
 
@@ -322,7 +327,7 @@ public class Parser extends Object{
    */
    private void nullStatement(){ //x
      accept(Token.NULL, "'null' expected");
-     accept(Token.SEMI, "';' expected");
+     accept(Token.SEMI, "';' expected2");
    }
 
    /*
@@ -335,6 +340,7 @@ public class Parser extends Object{
      while(token.code == Token.LOOP){
        accept(Token.LOOP, "'loop' expected");
        sequenceOfStatements();
+       token = scanner.nextToken();
        accept(Token.END, "'end' expected");
        accept(Token.LOOP, "'loop' expected");
      }
@@ -352,17 +358,17 @@ public class Parser extends Object{
    private void ifStatement(){ //**
      accept(Token.IF, "'if' expected");
      condition();
+     token = scanner.nextToken();
      accept(Token.THEN, "'then' expected");
      sequenceOfStatements();
      while(token.code == Token.ELSIF){
        accept(Token.ELSIF,"'elsif' expected");
        condition();
+       token = scanner.nextToken();
        while(token.code == Token.THEN){
          accept(Token.THEN, "'then' expected");
-         token = scanner.nextToken();
        }
        sequenceOfStatements();
-       token = scanner.nextToken();
      }
      if(token.code == Token.ELSE){
        accept(Token.ELSE,"'else' expected");
@@ -370,7 +376,7 @@ public class Parser extends Object{
      }
      accept(Token.END, "'end' expected");
      accept(Token.IF, "'if' expected");
-     accept(Token.SEMI, "';' expected");
+     accept(Token.SEMI, "';' expected3");
    }
 
    /*
@@ -382,7 +388,7 @@ public class Parser extends Object{
        accept(Token.WHEN, "'when' expected");
        condition();
      }
-     accept(Token.SEMI, "';' expected");
+     accept(Token.SEMI, "';' expected4");
    }
 
    /*
@@ -396,7 +402,7 @@ public class Parser extends Object{
          token = scanner.nextToken();
          expression();
       }
-      accept(Token.SEMI, "semicolon expected");
+      accept(Token.SEMI, "semicolon expected3");
    }
 
    /*
@@ -411,6 +417,7 @@ public class Parser extends Object{
    */
    private void expression(){ //x
       relation();
+      token = scanner.nextToken();
       if (token.code == Token.AND)
          while (token.code == Token.AND){
             token = scanner.nextToken();
@@ -429,6 +436,7 @@ public class Parser extends Object{
    private void relation(){ //**
      simpleExpression();
      if(relationalOperator.contains(token.code)){
+       token = scanner.nextToken();
        simpleExpression();
      }
    }
@@ -453,6 +461,7 @@ public class Parser extends Object{
    private void term(){ //*
      factor();
      while(multiplyingOperator.contains(token.code)){
+       token = scanner.nextToken();
        factor();
      }
    }
@@ -483,7 +492,7 @@ public class Parser extends Object{
          case Token.L_PAR:
             token = scanner.nextToken();
             expression();
-            accept(Token.R_PAR, "')' expected");
+            accept(Token.R_PAR, "')' expected4");
             break;
          default: fatalError("error in primary");
       }
@@ -493,22 +502,23 @@ public class Parser extends Object{
    name = identifier [ indexedComponent ]
    */
    private void name(){ //x
-      accept(Token.ID, "identifier expected");
-      if (token.code == Token.L_PAR)
-         indexedComponent();
+    accept(Token.ID, "identifier expected8");
+    if (token.code == Token.L_PAR)
+      token = scanner.nextToken();
+      indexedComponent();
    }
 
    /*
    indexedComponent = "(" expression  { "," expression } ")"
    */
    private void indexedComponent(){ //*
-     accept(Token.L_PAR, "'(' expected");
+     accept(Token.L_PAR, "'(' expected4");
      expression();
      while(token.code == Token.COMMA){
-       expression();
        token = scanner.nextToken();
+       expression();
      }
-     accept(Token.R_PAR, "')' expected");
+     accept(Token.R_PAR, "')' expected5");
    }
 
 }
