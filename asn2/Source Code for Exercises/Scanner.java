@@ -1,6 +1,13 @@
 import java.awt.*;
 import java.util.*;
 
+  /* Everything we code goes into the jar file at the
+   level top*/
+  //.ada, .java, .class
+  /* **Jar file must be executable** */
+  //submit Parser.java to canvas seperately
+
+/* Parser rules*/
 //  = means "is defined as"
 //  " " enclose literal items; accept()
 //  [ ] enclose items which may be omitted; check if []
@@ -9,6 +16,19 @@ import java.util.*;
 //  ( ) are used for grouping required choices;
 //  < > enclose semantic qualifications;
 //  identifier = Token.ID;
+
+/* Scope analysis rules*/
+// 1. All identifiers must be declared before they are used or referenced.
+// 2. There may be at most one declaration of a given identifier in a single block.
+// 3. In TinyAda, a new block begins with the formal parameter specifications of a
+// procedure and extends to the reserved word end belonging to that procedure.
+// 4. The visibility of a declared identifier extends into nested blocks, unless that
+// identifier is redeclared in a nested block.
+// 5. Identifiers are not case sensitive.
+
+/* Role analysis */
+
+
 
 public class Scanner extends Object{
 
